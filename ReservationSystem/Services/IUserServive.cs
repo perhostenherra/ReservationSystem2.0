@@ -10,5 +10,8 @@ namespace ReservationSystem.Services
     {
         public Task<UserDTO> CreateUserAsync(User user);
         public Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+        public Task<UserDTO> GetUserAsync(long id);
+        public Task<UserDTO> UptadeUserAsync(User user);
+        public Task<Boolean> DeleteUserAsync(long id);
     }
 }

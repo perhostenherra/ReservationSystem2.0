@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ReservationSystem.Middleware;
 using ReservationSystem.Models;
 using ReservationSystem.Repositories;
 using ReservationSystem.Services;
@@ -63,9 +64,11 @@ namespace ReservationSystem
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            db.Database.EnsureCreated();
 
+            db.Database.EnsureCreated();
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ApiKeyMiddleware>();
 
             app.UseRouting();
 

@@ -20,7 +20,22 @@ namespace ReservationSystem.Services
             return UserToDTO(newUser);
         }
 
-       
+        public async Task<bool> DeleteUserAsync(long id)
+        {
+            User user = _repository.GetUserAsync(id).Result;
+            if (user != null)
+            {
+                return await _repository.DeleteUserAsync(user);
+            }
+            return false;
+        }
+
+        public async Task<UserDTO> GetUserAsync(long id)
+        {
+            User user = (await _repository.GetUserAsync(id));
+            return UserToDTO(user);
+        }
+
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             List<User> list = (await _repository.GetAllUsersAsync()).ToList();
@@ -30,6 +45,12 @@ namespace ReservationSystem.Services
 
             }
             return dtoList;
+        }
+
+
+        public Task<UserDTO> UptadeUserAsync(User user)
+        {
+            throw new NotImplementedException();
         }
 
         private User DTOToUser(UserDTO user, String password)

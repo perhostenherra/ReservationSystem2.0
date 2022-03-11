@@ -49,14 +49,11 @@ namespace ReservationSystem.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<User>> GetUser(long id)
         {
-            //var user = await _context.Users.FindAsync(id);
-
-            //if (user == null)
-            //{
-            //  return NotFound();
-            // }
-
-            // return user;
+            UserDTO user = await _service.GetUserAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
             return null;
         }
 
@@ -126,17 +123,11 @@ namespace ReservationSystem.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<User>> DeleteUser(long id)
         {
-            //var user = await _context.Users.FindAsync(id);
-            //if (user == null)
-            // {
-            //    return NotFound();
-            //}
-
-            // _context.Users.Remove(user);
-            // await _context.SaveChangesAsync();
-
-            //return user;
-            return null;
+            if (await _service.DeleteUserAsync(id));
+            {
+                return Ok("Deleted");
+            }
+            return NotFound();
         }
 
     }
