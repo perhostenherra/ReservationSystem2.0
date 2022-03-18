@@ -16,7 +16,7 @@ namespace ReservationSystem.Models
         [MaxLength(25)]
         public String FirstName { get; set; }
         [MaxLength(25)]
-        public String LastName { get; set;}
+        public String LastName { get; set; }
         [Required]
         public String Password { get; set; }
 

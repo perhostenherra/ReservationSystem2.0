@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,6 +36,8 @@ namespace ReservationSystem
         {
             services.AddControllers();
             services.AddDbContext<ReservationContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ReservationDB")));
+            services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<IItemService, ItemService>();
@@ -72,6 +75,7 @@ namespace ReservationSystem
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
