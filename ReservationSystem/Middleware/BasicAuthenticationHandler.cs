@@ -56,11 +56,17 @@ namespace ReservationSystem.Middleware
 
                 return AuthenticateResult.Fail("Invalid username or password");
             }
-
+            string roles = "";
+            if (user.IsAdmin)
+            {
+                roles = "Admin";
+            }
             var claims= new[]
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role,roles)
+
             };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);

@@ -17,5 +17,6 @@ namespace ReservationSystem.Models
         public String FirstName { get; set; }
         [MaxLength(25)]
         public String LastName { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

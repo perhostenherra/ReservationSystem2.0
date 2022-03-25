@@ -1,8 +1,10 @@
-﻿using ReservationSystem.Models;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using ReservationSystem.Models;
 using ReservationSystem.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace ReservationSystem.Services
@@ -16,7 +18,24 @@ namespace ReservationSystem.Services
         }
         public async Task<UserDTO> CreateUserAsync(User user)
         {
-            User newUser = await _repository.AddUserAsync(user);
+            byte[] salt = new byte[128 / 8];
+            using (var rng=RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+            string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: user.Password, salt: salt, prf: KeyDerivationPrf.HMACSHA256, iterationCount: 10000, numBytesRequested: 256 / 8));
+
+            User newUser = new User
+            {
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                salt = salt,
+                Password = hashedPassword,
+                IsAdmin= user.IsAdmin
+            };
+
+            newUser = await _repository.AddUserAsync(newUser);
             return UserToDTO(newUser);
         }
 
@@ -71,6 +90,7 @@ namespace ReservationSystem.Services
             dto.UserName = user.UserName;
             dto.FirstName = user.FirstName;
             dto.LastName = user.LastName;
+            dto.IsAdmin = user.IsAdmin;
 
             return dto;
         }
