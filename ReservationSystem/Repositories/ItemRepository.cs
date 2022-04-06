@@ -28,9 +28,25 @@ namespace ReservationSystem.Repositories
             return item;
         }
 
+        public async Task<Item> GetItemAsync(string userName)//long id
+        {
+            //return await _context.Items.FindAsync(newItem);//id
+            return await _context.Items.FindAsync(userName);
+        }
+
         public async Task<IEnumerable<Item>> GetAllItems()
         {
             return await _context.Items.ToListAsync();
+        }
+
+        public Task<User> GetUserAsync(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Task<Item> CreateItemAsync(Item item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

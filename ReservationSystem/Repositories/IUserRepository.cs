@@ -10,8 +10,10 @@ namespace ReservationSystem.Repositories
     {
         public Task<User> AddUserAsync(User user);
         public Task<IEnumerable<User>> GetAllUsersAsync();
-        public Task<User> GetUserAsync(long id);
+        public Task<User> GetUserAsync(string id);
         public Task<User> UptadeUserAsync(User user);
+        public Task<User> GetUserAsync(long id);
         public Task <Boolean> DeleteUserAsync(User user);
+        
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReservationSystem.Middleware;
 using ReservationSystem.Models;
 using ReservationSystem.Services;
 
@@ -16,10 +18,12 @@ namespace ReservationSystem.Controllers
     {
         //private readonly ReservationContext _context;
         private readonly IItemService _service;
+        private readonly IUserAuthenticationService _authenticationService;
 
-        public ItemsController(IItemService service)
+        public ItemsController(IItemService service, IUserAuthenticationService authenticationService)
         {
             _service = service;
+            _authenticationService = authenticationService;
         }
 
         // GET: api/Items
@@ -81,13 +85,20 @@ namespace ReservationSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
+        public async Task<ActionResult<Item>> PostItem(ItemDTO item)
         {
-            Item newItem = await _service.CreateItemAsync(item);
+            //Tarkista onko oikeus muokata?
+            bool isAllowed = await _authenticationService.IsAllowed(this.User.FindFirst(ClaimTypes.Name).Value, item);
+            if (!isAllowed)
+            {
+                return Unauthorized();
+            }
+
+            ItemDTO newItem = await _service.CreateItemAsync(item);// Tarkistuta tämä
 
             if (newItem != null)
             {
-                return CreatedAtAction("GetItem", new { id = item.Id }, item);
+                return CreatedAtAction("GetItem", new { id = newItem.Id }, newItem);
             }
             return StatusCode(500);
         }

@@ -23,6 +23,7 @@ namespace ReservationSystem.Models
         public byte[] salt { get; set; }
         [DefaultValue(false)]
         public bool IsAdmin { get; set; }
+        
 
     }
 }

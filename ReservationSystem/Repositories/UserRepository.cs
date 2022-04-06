@@ -48,25 +48,38 @@ namespace ReservationSystem.Repositories
             return await _context.Users.ToListAsync();
         }
 
-        public Task<User> GetUser(long id)
+        public async Task<User> GetUserAsync(string userName)
         {
-            throw new NotImplementedException();
+            return await _context.Users.Where(x => x.UserName == userName).FirstOrDefaultAsync();
+
         }
 
-        public Task<User> GetUserAsync(long id)
+        public async Task<User> GetUserAsync(long id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> UptadeUser(User user)
-        {
-            throw new NotImplementedException();
+            User user = await _context.Users.FindAsync(id);
+            return user;
         }
 
         public Task<User> UptadeUserAsync(User user)
         {
             throw new NotImplementedException();
         }
+
+
+        public async Task<User> UptadeUserAsync(UserDTO user)
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return null;
+            }
+            return null;
+        }
+
+        
 
         Task<bool> IUserRepository.DeleteUserAsync(User user)
         {

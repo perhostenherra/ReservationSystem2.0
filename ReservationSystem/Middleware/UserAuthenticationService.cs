@@ -11,8 +11,12 @@ namespace ReservationSystem.Middleware
     public interface IUserAuthenticationService
     {
         Task<User> Authenticate(string username, string password);
+        Task<bool> IsAllowed(String userName, UserDTO user);
+        Task<bool> IsAllowed(String userName, ItemDTO item);
+        Task<bool> IsAllowed(String userName, Reservation reservation);
 
-            
+
+
     }
     public class UserAuthenticationService : IUserAuthenticationService
     {
@@ -34,12 +38,56 @@ namespace ReservationSystem.Middleware
             byte[] salt = user.salt;
             string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: password, salt: salt, prf: KeyDerivationPrf.HMACSHA256, iterationCount: 10000, numBytesRequested: 256 / 8));
 
-            if(hashedPassword != user.Password)
+            if (hashedPassword != user.Password)
             {
                 return null;
             }
 
             return user;
         }
+        public async Task<bool> IsAllowed(string userName, UserDTO userInfo)
+        {
+
+            var user = await _reservationContext.Users.Where(x => x.UserName == userName).FirstOrDefaultAsync();
+
+
+            if (user == null)
+            {
+                return false;
+            }
+            if (user.IsAdmin || user.UserName == userInfo.UserName)
+            {
+
+                return true;
+            }
+            return false;
+        }
+
+
+        public Task<bool> IsAllowed(string userName, Reservation reservation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsAllowed(string userName, ItemDTO item)
+        {
+            var user = await _reservationContext.Users.Where(x => x.UserName == userName).FirstOrDefaultAsync();
+
+
+            if (user == null)
+            {
+                return false;
+            }
+            if (user.IsAdmin || user.UserName == item.Owner)
+            {
+
+                return true;
+            }
+            return false;
+        }
     }
 }
+    
+
+
+

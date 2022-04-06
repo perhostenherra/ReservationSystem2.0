@@ -8,7 +8,7 @@ namespace ReservationSystem.Services
 {
     public interface IItemService
     {
-        public Task<Item> CreateItemAsync(Item item);
+        public Task<Item> CreateItemAsync(ItemDTO item);
         public Task<IEnumerable<Item>> GetAllItems();
     }
 }

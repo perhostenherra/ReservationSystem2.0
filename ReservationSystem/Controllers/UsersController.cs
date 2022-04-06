@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReservationSystem.Middleware;
 using ReservationSystem.Models;
 using ReservationSystem.Services;
 
@@ -17,10 +19,11 @@ namespace ReservationSystem.Controllers
     {
         //private readonly ReservationContext _context;
         private readonly IUserService _service;
-
-        public UsersController(IUserService service)
+        private readonly IUserAuthenticationService _authenticationService;
+        public UsersController(IUserService service, IUserAuthenticationService authenticationService)
         {
             _service = service;
+            _authenticationService = authenticationService;
         }
 
         // GET: api/Users
@@ -68,17 +71,30 @@ namespace ReservationSystem.Controllers
         /// <param name="id">Id of the user</param>
         /// <param name="user">User´s new information</param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{userName}")]
+        [Authorize(Roles ="Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> PutUser(long id, User user)
+        public async Task<IActionResult> PutUser(string userName, UserDTO user)
         {
-            //if (id != user.Id)
-           // {
-           //     return BadRequest();
-           // }
+            if (userName != user.UserName)
+           {
+                return BadRequest();
+            }
 
-           // _context.Entry(user).State = EntityState.Modified;
+            // _context.Entry(user).State = EntityState.Modified;
 
+            //tarkista onko oikeus muokata?
+            bool isAllowed = await _authenticationService.IsAllowed(this.User.FindFirst(ClaimTypes.Name).Value, user);
+            if (!isAllowed)
+            {
+                return Unauthorized();
+            }
+            UserDTO updatedUser = await _service.UptadeUserAsync(user);
+            if (updatedUser == null)
+            {
+                return StatusCode(500);
+            }
+            return Ok(updatedUser);
             //try
             //{
             //    await _context.SaveChangesAsync();
@@ -125,7 +141,7 @@ namespace ReservationSystem.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<User>> DeleteUser(long id)
         {
-            if (await _service.DeleteUserAsync(id));
+            if (await _service.DeleteUserAsync(id))
             {
                 return Ok("Deleted");
             }

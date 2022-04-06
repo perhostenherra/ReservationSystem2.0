@@ -8,6 +8,7 @@ namespace ReservationSystem.Repositories
 {
     public interface IItemRepository
     {
+        public Task<User> GetUserAsync(long id);
         public Task<Item> AddItemAsync(Item item);
         public Task<IEnumerable<Item>> GetAllItems();
     }
