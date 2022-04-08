@@ -30,25 +30,36 @@ namespace ReservationSystem.Controllers
         // GET: api/Items
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+        public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems()
         {
             return Ok(await _service.GetAllItems());
         }
 
+        // GET: api/Items/Username
+        [HttpGet("{/user/username}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems(String username)
+        {
+
+            return Ok(await _service.GetItems(username));
+
+        }
+        // GET: api/Items/query
+        [HttpGet("{query")]
+
+        public async Task<ActionResult<ItemDTO>> QueryItems(String query)
+        {
+            return Ok(await _service.QueryItems(query));
+        }
+
         // GET: api/Items/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Item>> GetItem(long id)
+        [HttpGet("{id:int")]
+
+        public async Task<ActionResult<ItemDTO>> GetItem(long id)
         {
             //var item = await _context.Items.FindAsync(id);
-
-            //if (item == null)
-            //{
-            //    return NotFound();
-            // }
-
-            // return item;
-            return null;
         }
+           
 
         // PUT: api/Items/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for

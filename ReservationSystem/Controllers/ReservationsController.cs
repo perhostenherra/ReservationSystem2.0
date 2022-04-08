@@ -26,10 +26,17 @@ namespace ReservationSystem.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
-            //return await _context.Reservations.ToListAsync();
+           // return await _context.Reservations.ToListAsync(id);
             return null;
         }
 
+        // GET: api/Reservations
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(String username)
+        {
+            return Ok(await _service.GetReservationForUser(user);
+            
+        }
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(long id)
@@ -84,7 +91,7 @@ namespace ReservationSystem.Controllers
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
             
-            await _service.CreateReservationAsync(reservation);
+            await _service.CreateReservationAsync(reservation);//kysy
 
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
             

@@ -48,5 +48,16 @@ namespace ReservationSystem.Repositories
         {
             throw new NotImplementedException();
         }
+
+       
+        public async Task<IEnumerable<Item>> GetItemsOfUser(User user)
+        {
+            return await _context.Items.Where(x => x.Owner == user).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Item>> QueryItems(string query)
+        {
+            return await _context.Items.Where(x => x.Name.Contains(query)).ToListAsync();
+        }
     }
 }

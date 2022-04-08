@@ -36,7 +36,20 @@ namespace ReservationSystem.Services
                 return null;
             }
         }
-
+        public async Task<IEnumerable<ItemDTO>> GetItems(string username)
+        {
+            User owner = await _userRepository.GetUserAsync(username);
+            if( owner == null)
+            {return null;}
+            IEnumerable<Item> items = await _repository.GetItemsOfUser(owner);
+            List<ItemDTO> itemDTOs = new List<ItemDTO>();
+            foreach (Item i in items)
+            {
+                itemDTOs.Add(ItemToDTO(i));
+            }
+            return itemDTOs;
+            
+        }
         private async Task<Item> DTOToItem(ItemDTO dto)
         {
 
@@ -83,6 +96,17 @@ namespace ReservationSystem.Services
         public Task<Item> CreateItemAsync(Item item)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<ItemDTO>> QueryItems(string query)
+        {
+            IEnumerable<Item> items = await _repository.QueryItems(query);
+            List<ItemDTO> itemDTOs = new List<ItemDTO>();
+            foreach (Item i in items)
+            {
+                itemDTOs.Add(ItemToDTO(i));
+            }
+            return itemDTOs;
         }
     }
 }

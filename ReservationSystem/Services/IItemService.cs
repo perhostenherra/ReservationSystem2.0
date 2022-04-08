@@ -10,5 +10,7 @@ namespace ReservationSystem.Services
     {
         public Task<ItemDTO> CreateItemAsync(ItemDTO item);
         public Task<IEnumerable<ItemDTO>> GetAllItems();
+        public Task<IEnumerable<ItemDTO>> GetItems(String username);
+        public Task<IEnumerable<ItemDTO>> QueryItems(String query);
     }
 }
