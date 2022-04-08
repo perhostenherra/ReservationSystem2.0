@@ -16,7 +16,7 @@ namespace ReservationSystem.Services
             _repository = repository;
             _userRepository = userRepository;
         }
-        public async Task<Item> CreateItemAsync(ItemDTO item)
+        public async Task<ItemDTO> CreateItemAsync(ItemDTO item)
         {
             Item newItem = await DTOToItem(item);
 
@@ -29,7 +29,7 @@ namespace ReservationSystem.Services
 
             if (newItem.Id != 0)
             {
-                return ItemToDto(newItem);
+                return ItemToDTO(newItem);
             }
             else
             {
@@ -56,12 +56,6 @@ namespace ReservationSystem.Services
             return item;
         }
 
-
-        private Item ItemToDto(Item newItem)
-        {
-            throw new NotImplementedException();
-        }
-
         private ItemDTO ItemToDTO(Item item)
         {
 
@@ -75,9 +69,15 @@ namespace ReservationSystem.Services
             return dto;
         }
 
-        public async Task<IEnumerable<Item>> GetAllItems()
+        public async Task<IEnumerable<ItemDTO>> GetAllItems()
         {
-            return await _repository.GetAllItems();
+            IEnumerable<Item> items = await _repository.GetAllItems();
+            List<ItemDTO> itemDTOs = new List<ItemDTO>();
+            foreach (Item i in items)
+            {
+                itemDTOs.Add(ItemToDTO(i));
+            }
+            return itemDTOs;
         }
 
         public Task<Item> CreateItemAsync(Item item)
