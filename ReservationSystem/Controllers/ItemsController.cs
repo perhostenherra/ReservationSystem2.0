@@ -94,7 +94,7 @@ namespace ReservationSystem.Controllers
                 return Unauthorized();
             }
 
-            ItemDTO newItem = await _service.CreateItemAsync(item);// Tarkistuta tämä
+            ItemDTO newItem = await _service.CreateItemAsync(item);
 
             if (newItem != null)
             {
