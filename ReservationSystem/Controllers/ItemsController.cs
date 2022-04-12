@@ -26,12 +26,35 @@ namespace ReservationSystem.Controllers
             _service = service;
             _authenticationService = authenticationService;
         }
+        /* // GET: api/Items
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+        {
+            // return await _context.Items.ToListAsync();
+            return null;
+        }
+       */
 
         // GET: api/Items
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems()
         {
+            return Ok(await _service.GetAllItems());
+        }
+        // GET: api/Items/5
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItems(long id)
+        {
+            /*
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            
+            return item;
+            */
             return Ok(await _service.GetAllItems());
         }
 
@@ -46,18 +69,11 @@ namespace ReservationSystem.Controllers
         }
         // GET: api/Items/query
         [HttpGet("{query")]
+        [Authorize]
 
-        public async Task<ActionResult<ItemDTO>> QueryItems(String query)
+        public async Task<ActionResult<IEnumerable<ItemDTO>>> QueryItems(String query)
         {
             return Ok(await _service.QueryItems(query));
-        }
-
-        // GET: api/Items/5
-        [HttpGet("{id:int")]
-
-        public async Task<ActionResult<ItemDTO>> GetItem(long id)
-        {
-            //var item = await _context.Items.FindAsync(id);
         }
            
 

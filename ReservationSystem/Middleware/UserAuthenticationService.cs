@@ -64,9 +64,18 @@ namespace ReservationSystem.Middleware
         }
 
 
-        public Task<bool> IsAllowed(string userName, Reservation reservation)
+        public async Task<bool> IsAllowed(string userName, ReservationDTO reservation)
         {
-            throw new NotImplementedException();
+            var user = await _reservationContext.Users.Where(x => x.UserName == userName).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return false;
+            }
+            if (user.IsAdmin || user.UserName == reservation.Owner)
+            {
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> IsAllowed(string userName, ItemDTO item)
@@ -84,6 +93,11 @@ namespace ReservationSystem.Middleware
                 return true;
             }
             return false;
+        }
+
+        public Task<bool> IsAllowed(string userName, Reservation reservation)
+        {
+            throw new NotImplementedException();
         }
     }
 }

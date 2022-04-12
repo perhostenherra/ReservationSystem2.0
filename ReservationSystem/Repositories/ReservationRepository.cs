@@ -30,24 +30,39 @@ namespace ReservationSystem.Repositories
 
         }
 
-        public Task<Reservation> GetReservationAsync(long id)
+        public async Task<Reservation> GetReservationAsync(long id)
         {
             return await _context.Reservations.FindAsync(id);
         }
 
-        public Task<Reservation> GetReservationAsync()
+        public async Task<IEnumerable<Reservation>> GetReservationAsync()
+        {
+            return await _context.Reservations.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Reservation>> GetReservationAsync(Item target, DateTime start, DateTime end)
+        {
+            return await _context.Reservations.Where(x => x.Target == target && ((x.Start >= start && x.Start < end) || (x.End > start && x.End < end) || (x.Start <= start && x.End > end))).ToListAsync(); //tästä puuttuu kellon aika rajaukset
+        }
+
+        public async Task<IEnumerable<Reservation>> GetReservationAsync(User user)
+        {
+            return await _context.Reservations.Where(x => x.Owner == user).ToListAsync();
+        }
+
+        Task<Reservation> IReservationRepository.GetReservationAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Reservation> GetReservationAsync(Item target, DateTime start, DateTime end)
+        Task<Reservation> IReservationRepository.GetReservationAsync(Item target, DateTime start, DateTime end)
         {
-            return await _context.Reservations.Where(x => x.Target == target).ToListAsync();
+            throw new NotImplementedException();
         }
 
-        public async Task<Reservation> GetReservationAsync(User user)
+        Task<Reservation> IReservationRepository.GetReservationAsync(User user)
         {
-            return await _context.Reservations.Where(x => x.Owner == user).ToListAsync();//kysy
+            throw new NotImplementedException();
         }
     }
 }

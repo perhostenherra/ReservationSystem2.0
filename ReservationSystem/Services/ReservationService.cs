@@ -19,64 +19,112 @@ namespace ReservationSystem.Services
             _itemRepository = itemRepository;
 
         }
-        public async Task CreateReservationAsync(Reservation res)
+
+        public async Task<ReservationDTO> CreateReservationAsync(ReservationDTO res)
         {
+            if (res.Start >= res.End)
+            {
+                return null;
+            }
             //Lisää varaus
             //Tarkista ensin onko kohde vapaa halutulla ajalla
-           
-            await _repository.AddReservationAsync(res);
-            
+            Item target = await _itemRepository.GetItemAsync(res.Target);
+            if (target == null)
+            {
+                return null;
+            }
+            IEnumerable<Reservation> reservations = await _repository.GetReservationAsync(target, res.Start, res.End);
+            if (reservations.Count() > 0)
+            {
+                return null;
+            }
+            Reservation newReservation = await DTOToReservationAsync(res);
+
+            await _repository.AddReservationAsync(newReservation);
+            return ReservationToDTO(newReservation);
+
         }
 
-        public Task CreateReservationAsync(ReservationDTO res)
+        public Task<ReservationDTO> CreateReservationAsync(long id)
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateReservationAsync(long id)
+        public async Task<IEnumerable<ReservationDTO>> GetAllReservations()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<ReservationDTO>> GetAllReservations()
-        {
-            IEnumerable<Reservation> reservation = await _repository.GetReservationAsync();
+            IEnumerable<Reservation> reservations = await _repository.GetReservationAsync();
             List<ReservationDTO> reservationDTOs = new List<ReservationDTO>();
-            foreach(Reservation r in Reservations)
+            foreach (Reservation r in reservations)
             {
                 reservationDTOs.Add(ReservationToDTO(r));
             }
             return reservationDTOs;
         }
 
-        public Task<IEnumerable<ReservationDTO>> GetAllReservationsForUser(string Username)
+        public async Task<ReservationDTO> GetReservation(long id)
+        {
+            return ReservationToDTO(await _repository.GetReservationAsync(id));
+        }
+
+        public async Task<IEnumerable<ReservationDTO>> GetReservationForUser(string username)
         {
             User owner = await _userRepository.GetUserAsync(username);
+            if (owner == null)
+            {
+                return null;
+            }
+            IEnumerable<Reservation> reservations = await _repository.GetReservationsAsync(owner);
+            List<ReservationDTO> dTOs = new List<ReservationDTO>();
+            foreach (Reservation r in reservations)
+            {
+                dTOs.Add(ReservationToDTO(r));
+            }
+            return dTOs;
+        }
+
+        //turha? vai mikä lie koodin murunen jäänyt ;D
+        /*
+        User owner = await _userRepository.GetUserAsync(dto.Owner);
             if(owner == null)
             {
                 return null;
             }
-        }
-        IEnumerable<Reservation> ReservationService = await _repository.GetReservationAsync(owner);
-        List<ReservationDTO> dTOs = new List<ReservationDTO>();
-        foreach(Reservation r in reservations)
-            {
-            dTOs.Add(ReservationToDTO(r));
-            }
-    return dTOs;
-
-        Task<ReservationDTO> IReservationService.CreateReservationAsync(ReservationDTO res)
+        */
+        private ReservationDTO ReservationToDTO(Reservation res)
         {
-            //lisää varaus
-            Reservation newReservation = await DTOToReservationAsync(res);
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.Id = res.Id;
+            reservationDTO.Target = res.Target.Id;
+            reservationDTO.Owner = res.Owner.UserName;
+            reservationDTO.Start = res.Start;
+            reservationDTO.End = res.End;
 
-            await _repository.AddReservationAsync(newReservation);
-            return ReservationDTO(newReservation);
+            return reservationDTO;
         }
 
-        Task<ReservationDTO> IReservationService.CreateReservationAsync(long id)
+        private async Task<Reservation> DTOToReservationAsync(ReservationDTO dto)
+        {
+            Reservation reservation = new Reservation();
+            User owner = await _userRepository.GetUserAsync(dto.Owner);
+
+            if (owner == null)
+            {
+                return null;
+            }
+
+            Item target = await _itemRepository.GetItemAsync(dto.Id);
+            reservation.Id = dto.Id;
+            reservation.Start = dto.Start;
+            reservation.End = dto.End;
+            reservation.Owner = owner;
+
+            return reservation;
+        }
+
+        public Task<IEnumerable<ReservationDTO>> GetAllReservationsForUser(string Username)
         {
             throw new NotImplementedException();
         }
     }
+
 }

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReservationSystem.Middleware;
 using ReservationSystem.Models;
 using ReservationSystem.Services;
 
@@ -16,40 +19,47 @@ namespace ReservationSystem.Controllers
     {
         //private readonly ReservationContext _context;
         private readonly IReservationService _service;
+        private readonly IUserAuthenticationService _authenticationService;
 
-        public ReservationsController(IReservationService service)
+
+        public ReservationsController(IReservationService service, IUserAuthenticationService authenticationService)
         {
             _service = service;
+            _authenticationService = authenticationService;
         }
 
         // GET: api/Reservations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
+        public async Task<ActionResult<ReservationDTO>> GetReservations(long id)
         {
-           // return await _context.Reservations.ToListAsync(id);
-            return null;
+            // return await _context.Reservations.ToListAsync();
+            ReservationDTO dto = await _service.GetReservations(id);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            return Ok(await _service.GetReservation(id));
         }
 
-        // GET: api/Reservations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(String username)
-        {
-            return Ok(await _service.GetReservationForUser(user);
-            
-        }
+        
         // GET: api/Reservations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservation(long id)
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservation(long id)
         {
-            //var reservation = await _context.Reservations.FindAsync(id);
+            /*var reservation = await _context.Reservations.FindAsync(id);
+         if (reservation == null)
+         {
+             return NotFound();
+         }
+         return reservation;*/
+            return Ok(await _service.GetAllReservations());
+        }
+        // GET: api/Reservation/user/username
+        [HttpGet("user/{username}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(String username)
+        {
+            return Ok(await _service.GetReservationForUser(username));
 
-            //if (reservation == null)
-            //{
-            //   return NotFound();
-            //}
-
-            // return reservation;
-            return null;
         }
 
         // PUT: api/Reservations/5
@@ -88,10 +98,18 @@ namespace ReservationSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        [Authorize]
+        public async Task<ActionResult<ReservationDTO>> PostReservation(ReservationDTO reservation)
         {
-            
-            await _service.CreateReservationAsync(reservation);//kysy
+            // oikeus lisätä varaus
+            bool isAllowed = await _authenticationService.IsAllowed(this.User.FindFirst(ClaimTypes.Name).Value, reservation);
+            if (!isAllowed)
+            { return Unauthorized(); }
+            reservation = await _service.CreateReservationAsync(reservation);
+            if (reservation == null)
+            {
+                return StatusCode(500);
+            }
 
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
             
