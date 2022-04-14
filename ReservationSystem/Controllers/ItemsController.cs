@@ -57,9 +57,9 @@ namespace ReservationSystem.Controllers
             */
             return Ok(await _service.GetAllItems());
         }
-
+        
         // GET: api/Items/Username
-        [HttpGet("{/user/username}")]
+        [HttpGet("user/{username}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems(String username)
         {
@@ -68,7 +68,7 @@ namespace ReservationSystem.Controllers
 
         }
         // GET: api/Items/query
-        [HttpGet("{query")]
+        [HttpGet("{query}")]
         [Authorize]
 
         public async Task<ActionResult<IEnumerable<ItemDTO>>> QueryItems(String query)
