@@ -28,10 +28,10 @@ namespace ReservationSystem.Repositories
             return item;
         }
 
-        public async Task<Item> GetItemAsync(string userName)//long id
+        public async Task<Item> GetItemAsync(long id)//long id
         {
             //return await _context.Items.FindAsync(newItem);//id
-            return await _context.Items.FindAsync(userName);
+            return await _context.Items.FindAsync(id);
         }
 
         public async Task<IEnumerable<Item>> GetAllItems()

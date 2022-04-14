@@ -13,7 +13,7 @@ namespace ReservationSystem.Middleware
         Task<User> Authenticate(string username, string password);
         Task<bool> IsAllowed(String userName, UserDTO user);
         Task<bool> IsAllowed(String userName, ItemDTO item);
-        Task<bool> IsAllowed(String userName, Reservation reservation);
+        Task<bool> IsAllowed(String userName, ReservationDTO reservation);
 
 
 
@@ -93,11 +93,6 @@ namespace ReservationSystem.Middleware
                 return true;
             }
             return false;
-        }
-
-        public Task<bool> IsAllowed(string userName, Reservation reservation)
-        {
-            throw new NotImplementedException();
         }
     }
 }

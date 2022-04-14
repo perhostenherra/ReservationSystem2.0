@@ -33,7 +33,7 @@ namespace ReservationSystem.Controllers
         public async Task<ActionResult<ReservationDTO>> GetReservations(long id)
         {
             // return await _context.Reservations.ToListAsync();
-            ReservationDTO dto = await _service.GetReservations(id);
+            ReservationDTO dto = await _service.GetReservation(id);
             if (dto == null)
             {
                 return NotFound();
@@ -58,7 +58,7 @@ namespace ReservationSystem.Controllers
         [HttpGet("user/{username}")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(String username)
         {
-            return Ok(await _service.GetReservationForUser(username));
+            return Ok(await _service.GetAllReservationsForUser(username));
 
         }
 

@@ -10,8 +10,8 @@ namespace ReservationSystem.Repositories
     {
         public Task<Reservation> AddReservationAsync(Reservation res);
         public Task<Reservation> GetReservationAsync(long id);
-        Task<Reservation> GetReservationAsync();
-        Task<Reservation> GetReservationAsync(Item target, DateTime start, DateTime end);
-        Task<Reservation> GetReservationAsync(User user);
+        Task<IEnumerable<Reservation>> GetReservationAsync();
+        Task<IEnumerable<Reservation>> GetReservationAsync(Item target, DateTime start, DateTime end);
+        Task<IEnumerable<Reservation>> GetReservationsAsync(User user);
     }
 }
