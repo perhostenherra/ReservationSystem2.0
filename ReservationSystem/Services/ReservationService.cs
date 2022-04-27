@@ -123,7 +123,7 @@ namespace ReservationSystem.Services
         }
 
 
-        //PITÄÄ MUISTAA LISÄTÄ GetReservationsforItem(long id)
+        //PITÄÄ MUISTAA LISÄTÄ GetReservationsforItem(long id) JOOO
         public async Task<IEnumerable<ReservationDTO>> GetAllReservationsForUser(string username)
         {
             User owner = await _userRepository.GetUserAsync(username);
