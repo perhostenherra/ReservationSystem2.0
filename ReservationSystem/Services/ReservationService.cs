@@ -112,7 +112,8 @@ namespace ReservationSystem.Services
                 return null;
             }
 
-            Item target = await _itemRepository.GetItemAsync(dto.Id);
+            Item target = await _itemRepository.GetItemAsync(dto.Target);
+            reservation.Target = target;
             reservation.Id = dto.Id;
             reservation.Start = dto.Start;
             reservation.End = dto.End;
@@ -121,9 +122,24 @@ namespace ReservationSystem.Services
             return reservation;
         }
 
-        public Task<IEnumerable<ReservationDTO>> GetAllReservationsForUser(string Username)
+
+        //PITÄÄ MUISTAA LISÄTÄ GetReservationsforItem(long id)
+        public async Task<IEnumerable<ReservationDTO>> GetAllReservationsForUser(string username)
         {
-            throw new NotImplementedException();
+            User owner = await _userRepository.GetUserAsync(username);
+
+            if(owner==null)
+            {
+                return null;
+            }
+
+            IEnumerable<Reservation> reservations = await _repository.GetReservationsAsync(owner);
+            List<ReservationDTO> dTOs = new List<ReservationDTO>();
+            foreach (Reservation r in reservations)
+            {
+                dTOs.Add(ReservationToDTO(r));
+            }
+            return dTOs;
         }
     }
 
