@@ -17,14 +17,15 @@ namespace ReservationSystem.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        //private readonly ReservationContext _context;
+        private readonly ReservationContext _context;
         private readonly IItemService _service;
         private readonly IUserAuthenticationService _authenticationService;
 
-        public ItemsController(IItemService service, IUserAuthenticationService authenticationService)
+        public ItemsController(IItemService service, IUserAuthenticationService authenticationService, ReservationContext context)
         {
             _service = service;
             _authenticationService = authenticationService;
+            _context = context;
         }
         /* // GET: api/Items
         [HttpGet]
@@ -46,15 +47,15 @@ namespace ReservationSystem.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItems(long id)
         {
-            /*
+            
             var item = await _context.Items.FindAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
             
-            return item;
-            */
+            //return item;
+            
             return Ok(await _service.GetAllItems());
         }
         
@@ -81,7 +82,7 @@ namespace ReservationSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(long id, Item item)
+        public async Task<IActionResult> PutItem(long id, ItemDTO item)
         {
             // if (id != item.Id)
             // {
@@ -136,17 +137,17 @@ namespace ReservationSystem.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Item>> DeleteItem(long id)
         {
-            //var item = await _context.Items.FindAsync(id);
-            //if (item == null)
-            // {
-            //    return NotFound();
-            //}
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
+             {
+                return NotFound();
+            }
 
-            // _context.Items.Remove(item);
-            // await _context.SaveChangesAsync();
+             _context.Items.Remove(item);
+             await _context.SaveChangesAsync();
 
-            // return item;
-            return null;
+             return item;
+            //return null;
         }
     }
 }

@@ -17,28 +17,24 @@ namespace ReservationSystem.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        //private readonly ReservationContext _context;
+        private readonly ReservationContext _context;
         private readonly IReservationService _service;
         private readonly IUserAuthenticationService _authenticationService;
 
 
-        public ReservationsController(IReservationService service, IUserAuthenticationService authenticationService)
+        public ReservationsController(IReservationService service, IUserAuthenticationService authenticationService, ReservationContext context)
         {
             _service = service;
             _authenticationService = authenticationService;
+            _context = context;
         }
 
         // GET: api/Reservations
         [HttpGet]
-        public async Task<ActionResult<ReservationDTO>> GetReservations(long id)
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservations()
         {
-            // return await _context.Reservations.ToListAsync();
-            ReservationDTO dto = await _service.GetReservation(id);
-            if (dto == null)
-            {
-                return NotFound();
-            }
-            return Ok(await _service.GetReservation(id));
+           
+            return Ok(await _service.GetAllReservations());
         }
 
         
@@ -46,17 +42,17 @@ namespace ReservationSystem.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservation(long id)
         {
-            /*var reservation = await _context.Reservations.FindAsync(id);
+           var reservation = await _service.GetReservation(id);
          if (reservation == null)
          {
              return NotFound();
          }
-         return reservation;*/
-            return Ok(await _service.GetAllReservations());
+        
+            return Ok(reservation);
         }
         // GET: api/Reservation/user/username
         [HttpGet("user/{username}")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(String username)
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservations(String username)
         {
             return Ok(await _service.GetAllReservationsForUser(username));
 
@@ -66,30 +62,16 @@ namespace ReservationSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservation(long id, Reservation reservation)
+        
+        //Kutsuu servicen update reservation
+        public async Task<IActionResult> PutReservation(long id, ReservationDTO reservation)
         {
-            //if (id != reservation.Id)
-            //{
-             //   return BadRequest();
-            //}
+            if (id != reservation.Id)
+            {
+                return BadRequest();
+            }
 
-           // _context.Entry(reservation).State = EntityState.Modified;
-
-            //try
-           // {
-            //    await _context.SaveChangesAsync();
-           // }
-           // catch (DbUpdateConcurrencyException)
-           // {
-            //    if (!ReservationExists(id))
-            //    {
-                 //   return NotFound();
-               // }
-               // else
-              //  {
-              //      throw;
-             //   }
-            //}
+            
 
             return NoContent();
         }
@@ -119,17 +101,17 @@ namespace ReservationSystem.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Reservation>> DeleteReservation(long id)
         {
-            // var reservation = await _context.Reservations.FindAsync(id);
-            // if (reservation == null)
-            // {
-            //     return NotFound();
-            // }
+            var reservation = await _context.Reservations.FindAsync(id);
+            if (reservation == null)
+             {
+                 return NotFound();
+             }
 
-            //  _context.Reservations.Remove(reservation);
-            // await _context.SaveChangesAsync();
+              _context.Reservations.Remove(reservation);
+             await _context.SaveChangesAsync();
 
-            // return reservation;
-            return null;
+             return reservation;
+            //return null;
         }
     }
 }
