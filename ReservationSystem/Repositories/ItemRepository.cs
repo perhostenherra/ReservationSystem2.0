@@ -70,9 +70,19 @@ namespace ReservationSystem.Repositories
             return await _context.Items.Include(i => i.Owner).Where(x => x.Name.Contains(query)).ToListAsync();
         }
 
-        public Task<bool> DeleteItemAsync(long id)
+        
+        public async Task<bool> DeleteItemAsync(long id)
         {
-            throw new NotImplementedException();
+            _context.Remove(id);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<Item> UpdateItem(Item item)

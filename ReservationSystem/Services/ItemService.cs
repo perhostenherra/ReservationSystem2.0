@@ -1,8 +1,10 @@
-﻿using ReservationSystem.Models;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using ReservationSystem.Models;
 using ReservationSystem.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace ReservationSystem.Services
@@ -93,9 +95,22 @@ namespace ReservationSystem.Services
             return itemDTOs;
         }
 
-        public Task<Item> CreateItemAsync(Item item)
+        
+        public async Task<Item> CreateItemAsync(Item item)
         {
-            throw new NotImplementedException();
+
+            Item newItem = new Item
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                Image = item.Image,
+                Owner = item.Owner
+               
+            };
+            
+            newItem = await _repository.AddItemAsync(newItem);
+            return newItem; 
         }
 
         public async Task<IEnumerable<ItemDTO>> QueryItems(string query)
