@@ -73,7 +73,7 @@ namespace ReservationSystem.Repositories
         
         public async Task<bool> DeleteItemAsync(long id)
         {
-            _context.Remove(id); //_context.Items.Remove(?) Tästä en ole varma
+            _context.Remove(id); //_context.Items.Remove(?) Tästä en ole varma.
             try
             {
                 await _context.SaveChangesAsync();
