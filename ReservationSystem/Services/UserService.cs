@@ -116,19 +116,18 @@ namespace ReservationSystem.Services
 
         public async Task<UserDTO> UpdateUserAsync(string username)
         {
-
-            throw new NotImplementedException();
-            /*User user = (await _repository.GetUserAsync(username));
+            
+            User user = (await _repository.GetUserAsync(username));
             user.FirstName = user.FirstName;
             user.LastName = user.LastName;
 
-            User updatedUser = await _repository.UptadeUserAsync(username);
+            User updatedUser = await _repository.UptadeUserAsync(user);
             if (updatedUser == null)
             {
                 return null;
             }
             return UserToDTO(updatedUser);
-            */
+            
         }
 
     }

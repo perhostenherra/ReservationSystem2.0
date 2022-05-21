@@ -13,5 +13,7 @@ namespace ReservationSystem.Services
         public Task<IEnumerable<ItemDTO>> GetItems(String username);
         public Task<IEnumerable<ItemDTO>> QueryItems(String query);
         public Task<ItemDTO> UpdateItem(ItemDTO item);
+
+        public Task<Boolean> DeleteItemAsync(long id);
     }
 }

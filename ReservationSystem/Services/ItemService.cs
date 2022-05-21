@@ -139,6 +139,16 @@ namespace ReservationSystem.Services
 
             return ItemToDTO(updateItem);
         }
+
+        public async Task<bool> DeleteItemAsync(long id)
+        {
+            Item item = _repository.GetItemAsync(id).Result;
+            if (item != null)
+            {
+                return await _repository.DeleteItemAsync(id);
+            }
+            return false;
+        }
     }
 }
    
