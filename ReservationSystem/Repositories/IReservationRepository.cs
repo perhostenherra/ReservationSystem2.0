@@ -15,5 +15,6 @@ namespace ReservationSystem.Repositories
         Task<IEnumerable<Reservation>> GetReservationsAsync(User user);
 
         Task<IEnumerable<Reservation>> GetReservationsAsync(Item item);
+        public Task<Reservation> UpdateReservation(Reservation reservation);
     }
 }

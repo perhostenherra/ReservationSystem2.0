@@ -19,16 +19,16 @@ namespace ReservationSystem.Repositories
             _context.Items.Add(item);
             try
             {
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
             return item;
         }
 
-        public async Task<Item> GetItemAsync(long id)//long id
+        public async Task<Item> GetItemAsync(long id)
         {
             //return await _context.Items.FindAsync(newItem);//id
             return await _context.Items.FindAsync(id);
@@ -36,7 +36,7 @@ namespace ReservationSystem.Repositories
 
         public async Task<IEnumerable<Item>> GetAllItems()
         {
-            return await _context.Items.Include(i=>i.Owner).ToListAsync();
+            return await _context.Items.Include(i => i.Owner).ToListAsync();
         }
 
         public async Task<User> GetUserAsync(long id)
@@ -59,15 +59,34 @@ namespace ReservationSystem.Repositories
             return item;
         }*/
 
-       
+
         public async Task<IEnumerable<Item>> GetItemsOfUser(User user)
         {
-            return await _context.Items.Include(i=>i.Owner).Where(x => x.Owner == user).ToListAsync();
+            return await _context.Items.Include(i => i.Owner).Where(x => x.Owner == user).ToListAsync();
         }
 
         public async Task<IEnumerable<Item>> QueryItems(string query)
         {
             return await _context.Items.Include(i => i.Owner).Where(x => x.Name.Contains(query)).ToListAsync();
         }
+
+        public Task<bool> DeleteItemAsync(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Item> UpdateItem(Item item)
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return null;
+        }
     }
+
 }

@@ -104,5 +104,32 @@ namespace ReservationSystem.Services
             return dto;
         }
 
+        public async Task<UserDTO> GetUserAsync(string username)
+        {
+            User user = (await _repository.GetUserAsync(username));
+            if (user == null)
+            {
+                return null;
+            }
+            return UserToDTO(user);
+        }
+
+        public async Task<UserDTO> UpdateUserAsync(string username)
+        {
+
+            throw new NotImplementedException();
+            /*User user = (await _repository.GetUserAsync(username));
+            user.FirstName = user.FirstName;
+            user.LastName = user.LastName;
+
+            User updatedUser = await _repository.UptadeUserAsync(username);
+            if (updatedUser == null)
+            {
+                return null;
+            }
+            return UserToDTO(updatedUser);
+            */
+        }
+
     }
 }

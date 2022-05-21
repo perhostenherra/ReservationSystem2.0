@@ -84,28 +84,25 @@ namespace ReservationSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(long id, ItemDTO item)
         {
-            // if (id != item.Id)
-            // {
-            //     return BadRequest();
-            //  }
+            if (id != item.Id)
+             {
+                 return BadRequest();
+              }
 
-            //  _context.Entry(item).State = EntityState.Modified;
+            // _context.Entry(item).State = EntityState.Modified;
+            ItemDTO updateItem = await _service.UpdateItem(item);
 
-            // try
-            //{
-            //     await _context.SaveChangesAsync();
-            //}
-            // catch (DbUpdateConcurrencyException)
-            // {
-            //    if (!ItemExists(id))
-            //    {
-            //    return NotFound();
-            // }
-            //  else
-            //  {
-            //      throw;
-            //  }
-            // }
+            try
+            {
+                 await _context.SaveChangesAsync();
+            }
+             catch (DbUpdateConcurrencyException)
+             {
+                {
+                    return NotFound();
+                }
+            
+             }
 
             // return NoContent();
             return null;
@@ -117,7 +114,7 @@ namespace ReservationSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<Item>> PostItem(ItemDTO item)
         {
-            //Tarkista onko oikeus muokata?
+            //Tarkistetaan onko oikeus muokata
             bool isAllowed = await _authenticationService.IsAllowed(this.User.FindFirst(ClaimTypes.Name).Value, item);
             if (!isAllowed)
             {
@@ -133,7 +130,7 @@ namespace ReservationSystem.Controllers
             return StatusCode(500);
         }
 
-        // DELETE: api/Items/5
+        // DELETE an item
         [HttpDelete("{id}")]
         public async Task<ActionResult<Item>> DeleteItem(long id)
         {

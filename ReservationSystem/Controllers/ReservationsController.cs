@@ -29,15 +29,17 @@ namespace ReservationSystem.Controllers
             _context = context;
         }
 
-        // GET: api/Reservations
-        [HttpGet]
+        
+        [HttpGet] //Get reservations
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservations()
         {
            
             return Ok(await _service.GetAllReservations());
         }
 
-        
+  
+
+        //Get reservations via id
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservation(long id)
@@ -50,6 +52,8 @@ namespace ReservationSystem.Controllers
         
             return Ok(reservation);
         }
+
+        //Get reservations via username
         // GET: api/Reservation/user/username
         [HttpGet("user/{username}")]
         public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservations(String username)
@@ -58,11 +62,12 @@ namespace ReservationSystem.Controllers
 
         }
 
+        //Edit reservations
         // PUT: api/Reservations/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        
+
         //Kutsuu servicen update reservation
         public async Task<IActionResult> PutReservation(long id, ReservationDTO reservation)
         {
@@ -71,11 +76,20 @@ namespace ReservationSystem.Controllers
                 return BadRequest();
             }
 
-            
+            _context.Entry(reservation).State = EntityState.Modified;
 
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return null;
+            }
             return NoContent();
         }
 
+        //Make reservation
         // POST: api/Reservations
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -97,6 +111,7 @@ namespace ReservationSystem.Controllers
             
         }
 
+        //Delete reservation
         // DELETE: api/Reservations/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Reservation>> DeleteReservation(long id)

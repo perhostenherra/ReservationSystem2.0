@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ReservationSystem.Services
 {
-    public class ItemService : IItemService 
+    public class ItemService : IItemService
     {
         private readonly IItemRepository _repository;
         private readonly IUserRepository _userRepository;
@@ -39,8 +39,8 @@ namespace ReservationSystem.Services
         public async Task<IEnumerable<ItemDTO>> GetItems(string username)
         {
             User owner = await _userRepository.GetUserAsync(username);
-            if( owner == null)
-            {return null;}
+            if (owner == null)
+            { return null; }
             IEnumerable<Item> items = await _repository.GetItemsOfUser(owner);
             List<ItemDTO> itemDTOs = new List<ItemDTO>();
             foreach (Item i in items)
@@ -48,7 +48,7 @@ namespace ReservationSystem.Services
                 itemDTOs.Add(ItemToDTO(i));
             }
             return itemDTOs;
-            
+
         }
         private async Task<Item> DTOToItem(ItemDTO dto)
         {
@@ -107,6 +107,22 @@ namespace ReservationSystem.Services
                 itemDTOs.Add(ItemToDTO(i));
             }
             return itemDTOs;
+        }
+
+        public async Task<ItemDTO> UpdateItem(ItemDTO item)
+        {
+            Item dbItem = await _repository.GetItemAsync(item.Id);
+            dbItem.Name = item.Name;
+            dbItem.Description = item.Description;
+
+            Item updateItem = await _repository.UpdateItem(dbItem);
+            if (updateItem == null)
+            {
+                return null;
+            }
+
+
+            return ItemToDTO(updateItem);
         }
     }
 }

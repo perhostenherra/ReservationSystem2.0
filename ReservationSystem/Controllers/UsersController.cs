@@ -52,14 +52,14 @@ namespace ReservationSystem.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
-        public async Task<ActionResult<User>> GetUser(long id)
+        public async Task<ActionResult<UserDTO>> GetUser(long id)
         {
             UserDTO user = await _service.GetUserAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            return null;
+            return user;
         }
 
         // PUT: api/Users/5
